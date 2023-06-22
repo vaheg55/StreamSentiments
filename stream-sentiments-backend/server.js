@@ -18,13 +18,19 @@ app.use(cors());
 app.get("/auth_gcp", (req, res) => {
     try {
         async function getAccessToken() {
-            const keysEnvVar = process.env["CREDS"];
-            const keys = JSON.parse(keysEnvVar);
+            try {
+                const keysEnvVar = process.env["CREDS"];
+                const keys = JSON.parse(keysEnvVar);
 
-            const client = auth.fromJSON(keys);
-            client.scopes = ["https://www.googleapis.com/auth/cloud-platform"];
-            const accessToken = await client.getAccessToken();
-            res.status(200).send(accessToken);
+                const client = auth.fromJSON(keys);
+                client.scopes = [
+                    "https://www.googleapis.com/auth/cloud-platform",
+                ];
+                const accessToken = await client.getAccessToken();
+                res.status(200).send(accessToken);
+            } catch {
+                res.status(500).send("ERROR");
+            }
         }
         getAccessToken();
     } catch (error) {
@@ -36,13 +42,17 @@ app.get("/auth_gcp", (req, res) => {
 app.get("/auth_twitch", (req, res) => {
     try {
         const getAccessToken = async () => {
-            const response = await axios.post(
-                (url = `https://id.twitch.tv/oauth2/token?client_id=${twitch_client_id}&client_secret=${twitch_client_secret}&grant_type=client_credentials`)
-            );
-            res.status(200).send({
-                token: response.data.access_token,
-                client_id: twitch_client_id,
-            });
+            try {
+                const response = await axios.post(
+                    (url = `https://id.twitch.tv/oauth2/token?client_id=${twitch_client_id}&client_secret=${twitch_client_secret}&grant_type=client_credentials`)
+                );
+                res.status(200).send({
+                    token: response.data.access_token,
+                    client_id: twitch_client_id,
+                });
+            } catch {
+                res.status(500).send("ERROR");
+            }
         };
         getAccessToken();
     } catch (error) {
@@ -56,27 +66,31 @@ app.get("/auth_twitch", (req, res) => {
 app.post("/predict", (req, res) => {
     try {
         const getPredictions = async () => {
-            const response = await axios.post(
-                `${process.env.AI_PLATFORM_API_ENDPOINT}/v1/projects/${process.env.GCP_PROJECT_ID}/models/${process.env.MODEL_NAME}:predict`,
-                {
-                    instances: req.body.messages.map((msg) => ({
-                        model_2_input: msg,
-                    })),
-                },
-                {
-                    headers: {
-                        Authorization: `OAuth ${req.body.token}`,
-                        "Content-Type": "application/json",
+            try {
+                const response = await axios.post(
+                    `${process.env.AI_PLATFORM_API_ENDPOINT}/v1/projects/${process.env.GCP_PROJECT_ID}/models/${process.env.MODEL_NAME}:predict`,
+                    {
+                        instances: req.body.messages.map((msg) => ({
+                            model_2_input: msg,
+                        })),
                     },
-                }
-            );
-            const predictions = response.data.predictions.map(
-                (pred) => pred.model_3["0"]
-            );
-            const pairedPredictions = predictions
-                .map((pred, i) => [req.body.messages[i], pred])
-                .filter((pair) => isFinite(pair[1]));
-            res.status(201).send(pairedPredictions);
+                    {
+                        headers: {
+                            Authorization: `OAuth ${req.body.token}`,
+                            "Content-Type": "application/json",
+                        },
+                    }
+                );
+                const predictions = response.data.predictions.map(
+                    (pred) => pred.model_3["0"]
+                );
+                const pairedPredictions = predictions
+                    .map((pred, i) => [req.body.messages[i], pred])
+                    .filter((pair) => isFinite(pair[1]));
+                res.status(201).send(pairedPredictions);
+            } catch {
+                res.status(500).send("ERROR");
+            }
         };
         getPredictions();
     } catch (error) {
