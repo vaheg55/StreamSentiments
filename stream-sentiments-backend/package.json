@@ -1,0 +1,25 @@
+{
+  "name": "stream-sentiments-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@tensorflow/tfjs": "^4.7.0",
+    "@tensorflow/tfjs-node": "^3.1.0",
+    "axios": "^1.4.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.1.4",
+    "express": "^4.18.2",
+    "fs": "^0.0.1-security",
+    "google-auth-library": "^8.8.0",
+    "googleapis": "^118.0.0",
+    "jsonwebtoken": "^9.0.0",
+    "uuid": "^9.0.0"
+  }
+}
