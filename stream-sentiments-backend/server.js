@@ -81,12 +81,14 @@ app.post("/predict", (req, res) => {
                         },
                     }
                 );
-                const predictions = response.data.predictions.map(
-                    (pred) => pred.model_3["0"]
-                );
-                const pairedPredictions = predictions
-                    .map((pred, i) => [req.body.messages[i], pred])
-                    .filter((pair) => isFinite(pair[1]));
+                // const predictions = response.data.predictions.map(
+                //     (pred) => pred.model_3["0"]
+                // );
+                // const pairedPredictions = predictions
+                //     .map((pred, i) => [req.body.messages[i], pred])
+                //     .filter((pair) => isFinite(pair[1]));
+                const pairedPredictions = req.body.messages
+                    .map((messg) => [messg, Math.random() + 0.055]);
                 res.status(201).send(pairedPredictions);
             } catch {
                 res.status(500).send("ERROR");
