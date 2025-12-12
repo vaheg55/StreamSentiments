@@ -67,20 +67,20 @@ app.post("/predict", (req, res) => {
     try {
         const getPredictions = async () => {
             try {
-                const response = await axios.post(
-                    `${process.env.AI_PLATFORM_API_ENDPOINT}/v1/projects/${process.env.GCP_PROJECT_ID}/models/${process.env.MODEL_NAME}:predict`,
-                    {
-                        instances: req.body.messages.map((msg) => ({
-                            model_2_input: msg,
-                        })),
-                    },
-                    {
-                        headers: {
-                            Authorization: `OAuth ${req.body.token}`,
-                            "Content-Type": "application/json",
-                        },
-                    }
-                );
+                // const response = await axios.post(
+                //     `${process.env.AI_PLATFORM_API_ENDPOINT}/v1/projects/${process.env.GCP_PROJECT_ID}/models/${process.env.MODEL_NAME}:predict`,
+                //     {
+                //         instances: req.body.messages.map((msg) => ({
+                //             model_2_input: msg,
+                //         })),
+                //     },
+                //     {
+                //         headers: {
+                //             Authorization: `OAuth ${req.body.token}`,
+                //             "Content-Type": "application/json",
+                //         },
+                //     }
+                // );
                 // const predictions = response.data.predictions.map(
                 //     (pred) => pred.model_3["0"]
                 // );
